@@ -10,8 +10,8 @@ import axios from 'axios';
 
         handleSubmit = character => {
         this.makePostCall(character).then( callResult => {
-            if (callResult === true) {
-                this.setState({ characters: [...this.state.characters, character] });
+            if (callResult) {
+                this.setState({ characters: [...this.state.characters, callResult.data] });
             }
         });
         }
@@ -20,7 +20,7 @@ import axios from 'axios';
             return axios.post('http://localhost:5000/users', character)
             .then(function (response) {
             console.log(response);
-            return (response.status === 201);
+            return (response);
             })
             .catch(function (error) {
             console.log(error);
@@ -30,12 +30,20 @@ import axios from 'axios';
 
         removeCharacter = index => {
             const { characters } = this.state
-        
-            this.setState({
-            characters: characters.filter((character, i) => {
-                return i !== index
-            }),
-            })
+
+            console.log(characters[index])
+
+            axios.delete('http://localhost:5000/users', { data : characters[index] })
+                .then(
+                    this.setState({
+                        characters: characters.filter((character, i) => {
+                            return i !== index
+                        }),
+                    })
+                )
+                .catch(function (error) {
+                    console.log(error);
+                });
         }
 
         componentDidMount() {
